@@ -7,9 +7,12 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
-    "clean": "turbo run clean && rm -rf node_modules"
+    "clean": "turbo run clean && rm -rf node_modules",
+    "check": "pnpm lint && pnpm typecheck && pnpm build && echo '✅ All checks passed!'",
+    "precommit": "pnpm check"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
