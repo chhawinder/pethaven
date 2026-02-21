@@ -5,6 +5,7 @@ import authRoutes from './routes/auth';
 import petRoutes from './routes/pets';
 import hostRoutes from './routes/hosts';
 import bookingRoutes from './routes/bookings';
+import reviewRoutes from './routes/reviews';
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/pets', petRoutes);
 app.use('/api/v1/hosts', hostRoutes);
 app.use('/api/v1/bookings', bookingRoutes);
+app.use('/api/v1/reviews', reviewRoutes);
 
 const apiInfo = {
   name: 'PetHaven API',
@@ -32,7 +34,7 @@ const apiInfo = {
     pets: '/api/v1/pets',
     hosts: '/api/v1/hosts',
     bookings: '/api/v1/bookings',
-    users: '/api/v1/users (coming soon)',
+    reviews: '/api/v1/reviews',
   },
 };
 
