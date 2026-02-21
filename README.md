@@ -5,44 +5,66 @@
 ## Quick Start
 
 ```bash
-# Clone and install
-git clone <repo-url>
+# Clone the repo
+git clone https://github.com/chhawinder/pethaven.git
 cd pethaven
+
+# Install dependencies (requires pnpm)
+npm install -g pnpm
 pnpm install
 
-# Start development
+# Start all services in development mode
 pnpm dev
 ```
+
+## Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `pnpm dev` | Start all apps in development mode |
+| `pnpm build` | Build all packages |
+| `pnpm lint` | Run linting across all packages |
+| `pnpm format` | Format code with Prettier |
+| `pnpm clean` | Clean all build artifacts |
 
 ## Tech Stack
 
 | Layer | Technology |
 |-------|------------|
-| Mobile | React Native + Expo |
-| Web | Next.js 14 + TailwindCSS |
-| Backend | Node.js + Express |
-| Database | PostgreSQL + Prisma |
-| Payments | Stripe Connect |
-| Realtime | Socket.io |
+| **Monorepo** | Turborepo + pnpm workspaces |
+| **Web** | Next.js 14 + TailwindCSS |
+| **API** | Node.js + Express |
+| **Mobile** | React Native + Expo (coming soon) |
+| **Database** | PostgreSQL + Prisma (PR-2) |
+| **Payments** | Stripe Connect (PR-29+) |
 
 ## Project Structure
 
 ```
 pethaven/
 ├── apps/
-│   ├── mobile/     # React Native app
-│   ├── web/        # Next.js website
-│   └── admin/      # Admin dashboard
+│   └── web/           # Next.js website (port 3000)
 ├── packages/
-│   ├── api/        # Backend services
-│   ├── shared/     # Shared types/utils
-│   └── ui/         # Shared components
-└── docs/           # Documentation
+│   ├── api/           # Express API server (port 4000)
+│   └── shared/        # Shared types & constants
+├── docs/              # Documentation
+├── turbo.json         # Turborepo config
+└── pnpm-workspace.yaml
 ```
+
+## Development Ports
+
+| App | URL |
+|-----|-----|
+| Web | http://localhost:3000 |
+| API | http://localhost:4000 |
 
 ## Development Milestones
 
-- [ ] **M1** - Project Setup & Auth (PR 1-7)
+- [x] **PR-1** - Project Scaffolding (Turborepo + Web + API)
+- [ ] **PR-2** - Database Setup (PostgreSQL + Prisma)
+- [ ] **PR-3-5** - Auth Service
+- [ ] **PR-6-7** - Mobile App Setup
 - [ ] **M2** - User & Pet Profiles (PR 8-12)
 - [ ] **M3** - Host Profiles & Search (PR 13-18)
 - [ ] **M4** - Booking System (PR 19-24)
@@ -53,7 +75,7 @@ pethaven/
 
 ## Documentation
 
-- [Full Project Plan](./docs/PROJECT_PLAN.md) - Complete architecture, edge cases, and PR breakdown
+- [Full Project Plan](./docs/PROJECT_PLAN.md) - Architecture, edge cases, and PR breakdown
 
 ## License
 
