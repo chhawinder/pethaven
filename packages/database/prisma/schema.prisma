@@ -1,0 +1,188 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model - supports both pet owners and hosts
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  firstName     String
+  lastName      String
+  phone         String?
+  avatarUrl     String?
+  role          UserRole  @default(PET_OWNER)
+  isVerified    Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  pets          Pet[]
+  hostProfile   HostProfile?
+  bookingsAsOwner   Booking[]   @relation("BookingOwner")
+  bookingsAsHost    Booking[]   @relation("BookingHost")
+  reviewsGiven      Review[]    @relation("ReviewAuthor")
+  reviewsReceived   Review[]    @relation("ReviewSubject")
+
+  @@index([email])
+}
+
+enum UserRole {
+  PET_OWNER
+  HOST
+  ADMIN
+}
+
+// Pet model
+model Pet {
+  id          String    @id @default(cuid())
+  ownerId     String
+  name        String
+  type        PetType
+  breed       String?
+  age         Int?
+  weight      Float?
+  gender      Gender?
+  description String?
+  photoUrl    String?
+  isNeutered  Boolean   @default(false)
+  vaccinated  Boolean   @default(false)
+  specialNeeds String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  owner       User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  bookings    Booking[]
+
+  @@index([ownerId])
+}
+
+enum PetType {
+  DOG
+  CAT
+  BIRD
+  RABBIT
+  FISH
+  OTHER
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+// Host profile - additional info for users who host pets
+model HostProfile {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  bio             String?
+  address         String
+  city            String
+  state           String
+  zipCode         String
+  latitude        Float?
+  longitude       Float?
+  homeType        HomeType  @default(HOUSE)
+  hasYard         Boolean   @default(false)
+  acceptedPetTypes PetType[]
+  maxPets         Int       @default(1)
+  pricePerNight   Float
+  pricePerWeek    Float?
+  isAvailable     Boolean   @default(true)
+  rating          Float?
+  reviewCount     Int       @default(0)
+  photos          String[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  availability    HostAvailability[]
+
+  @@index([city])
+  @@index([isAvailable])
+}
+
+enum HomeType {
+  APARTMENT
+  HOUSE
+  CONDO
+  FARM
+}
+
+// Host availability calendar
+model HostAvailability {
+  id            String    @id @default(cuid())
+  hostProfileId String
+  date          DateTime
+  isAvailable   Boolean   @default(true)
+
+  // Relations
+  hostProfile   HostProfile @relation(fields: [hostProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([hostProfileId, date])
+  @@index([hostProfileId])
+  @@index([date])
+}
+
+// Booking model
+model Booking {
+  id            String        @id @default(cuid())
+  ownerId       String
+  hostId        String
+  petId         String
+  startDate     DateTime
+  endDate       DateTime
+  totalPrice    Float
+  serviceFee    Float
+  status        BookingStatus @default(PENDING)
+  specialRequests String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Relations
+  owner         User          @relation("BookingOwner", fields: [ownerId], references: [id])
+  host          User          @relation("BookingHost", fields: [hostId], references: [id])
+  pet           Pet           @relation(fields: [petId], references: [id])
+  review        Review?
+
+  @@index([ownerId])
+  @@index([hostId])
+  @@index([status])
+  @@index([startDate, endDate])
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  REJECTED
+}
+
+// Review model
+model Review {
+  id          String    @id @default(cuid())
+  bookingId   String    @unique
+  authorId    String
+  subjectId   String
+  rating      Int
+  comment     String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  booking     Booking   @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  author      User      @relation("ReviewAuthor", fields: [authorId], references: [id])
+  subject     User      @relation("ReviewSubject", fields: [subjectId], references: [id])
+
+  @@index([authorId])
+  @@index([subjectId])
+}
