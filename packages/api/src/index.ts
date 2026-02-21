@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
 import petRoutes from './routes/pets';
+import hostRoutes from './routes/hosts';
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ app.get('/health', (req, res) => {
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/pets', petRoutes);
+app.use('/api/v1/hosts', hostRoutes);
 
 const apiInfo = {
   name: 'PetHaven API',
@@ -26,8 +28,8 @@ const apiInfo = {
     health: '/health',
     auth: '/api/v1/auth',
     pets: '/api/v1/pets',
+    hosts: '/api/v1/hosts',
     users: '/api/v1/users (coming soon)',
-    hosts: '/api/v1/hosts (coming soon)',
     bookings: '/api/v1/bookings (coming soon)',
   },
 };
